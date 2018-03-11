@@ -62,6 +62,7 @@
         <module>Player</module>
         <module>Common</module>
         <module>Core</module>
+        <module>SilentUpdate</module>
     </modules>
 
     <properties>
