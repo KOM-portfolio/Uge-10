@@ -14,7 +14,10 @@ import dk.sdu.mmmi.cbse.managers.GameInputProcessor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import org.openide.util.Lookup;
+import org.openide.util.LookupEvent;
+import org.openide.util.LookupListener;
 
 public class Game
         implements ApplicationListener {
@@ -25,11 +28,12 @@ public class Game
 
     private final GameData gameData = new GameData();
     private List<IEntityProcessingService> entityProcessors = new ArrayList<>();
+    private List<IGamePluginService> gamePlugins = new CopyOnWriteArrayList<>();
     private World world = new World();
+    private Lookup.Result<IGamePluginService> result;
 
     @Override
     public void create() {
-
         gameData.setDisplayWidth(Gdx.graphics.getWidth());
         gameData.setDisplayHeight(Gdx.graphics.getHeight());
 
@@ -39,13 +43,15 @@ public class Game
 
         sr = new ShapeRenderer();
 
-        Gdx.input.setInputProcessor(
-                new GameInputProcessor(gameData)
-        );
+        Gdx.input.setInputProcessor(new GameInputProcessor(gameData));
 
-        // Lookup all Game Plugins using ServiceLoader
-        for (IGamePluginService iGamePlugin : getPluginServices()) {
-            iGamePlugin.start(gameData, world);
+        result = lookup.lookupResult(IGamePluginService.class);
+        result.addLookupListener(lookupListener);
+        result.allItems();
+
+        for (IGamePluginService plugin : result.allInstances()) {
+            plugin.start(gameData, world);
+            gamePlugins.add(plugin);
         }
     }
 
@@ -116,4 +122,31 @@ public class Game
     private Collection<? extends IEntityProcessingService> getEntityProcessingServices() {
         return lookup.lookupAll(IEntityProcessingService.class);
     }
+
+    private final LookupListener lookupListener = new LookupListener() {
+        @Override
+        public void resultChanged(LookupEvent le) {
+
+            Collection<? extends IGamePluginService> updated = result.allInstances();
+
+            for (IGamePluginService us : updated) {
+                // Newly installed modules
+                if (!gamePlugins.contains(us)) {
+                    System.out.println("installed" + us);
+                    us.start(gameData, world);
+                    gamePlugins.add(us);
+                }
+            }
+
+            // Stop and remove module
+            for (IGamePluginService gs : gamePlugins) {
+                if (!updated.contains(gs)) {
+                    System.out.println("uninstalled" + gs);
+                    gs.stop(gameData, world);
+                    gamePlugins.remove(gs);
+                }
+            }
+        }
+
+    };
 }
