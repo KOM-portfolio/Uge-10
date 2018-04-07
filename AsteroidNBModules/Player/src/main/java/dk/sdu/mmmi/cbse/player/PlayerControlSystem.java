@@ -9,7 +9,7 @@ import dk.sdu.mmmi.cbse.common.data.World;
 import dk.sdu.mmmi.cbse.common.data.entityparts.MovingPart;
 import dk.sdu.mmmi.cbse.common.data.entityparts.PositionPart;
 import dk.sdu.mmmi.cbse.common.services.IEntityProcessingService;
-import dk.sdu.mmmi.cbse.common.services.IGamePluginService;
+import dk.sdu.mmmi.cbse.commonplayer.Player;
 //import static java.lang.Math.cos;
 //import static java.lang.Math.sin;
 //import static java.lang.Math.sqrt;
@@ -19,18 +19,14 @@ import org.openide.util.lookup.ServiceProviders;
 
 
 @ServiceProviders(value = {
-    @ServiceProvider(service = IEntityProcessingService.class)
-    , 
-    @ServiceProvider(service = IGamePluginService.class)}
+    @ServiceProvider(service = IEntityProcessingService.class)}
 )
 
 /**
  *
  * @author jcs
  */
-public class PlayerControlSystem implements IEntityProcessingService, IGamePluginService {
-
-    private Entity player;
+public class PlayerControlSystem implements IEntityProcessingService {
     
     @Override
     public void process(GameData gameData, World world) {
@@ -74,36 +70,4 @@ public class PlayerControlSystem implements IEntityProcessingService, IGamePlugi
         entity.setShapeX(shapex);
         entity.setShapeY(shapey);
     }
-    
-    @Override
-    public void start(GameData gameData, World world) {
-        
-        // Add entities to the world
-        player = createPlayerShip(gameData);
-        world.addEntity(player);
-    }
-
-    private Entity createPlayerShip(GameData gameData) {
-
-        float deacceleration = 10;
-        float acceleration = 200;
-        float maxSpeed = 300;
-        float rotationSpeed = 5;
-        float x = gameData.getDisplayWidth() / 2;
-        float y = gameData.getDisplayHeight() / 2;
-        float radians = 3.1415f / 2;
-        
-        Entity playerShip = new Player();
-        playerShip.add(new MovingPart(deacceleration, acceleration, maxSpeed, rotationSpeed));
-        playerShip.add(new PositionPart(x, y, radians));
-        
-        return playerShip;
-    }
-
-    @Override
-    public void stop(GameData gameData, World world) {
-        // Remove entities
-        world.removeEntity(player);
-    }
-
 }
