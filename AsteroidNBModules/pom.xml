@@ -63,9 +63,10 @@
         <module>Common</module>
         <module>Core</module>
         <module>SilentUpdate</module>
-        <module>CommonPlayer</module>
+        <module>CommonAsteroid</module>
+        <module>Asteroid</module>
         <module>CommonEnemy</module>
-        <module>Enemy/Enemy</module>
+        <module>Enemy</module>
     </modules>
 
     <properties>
