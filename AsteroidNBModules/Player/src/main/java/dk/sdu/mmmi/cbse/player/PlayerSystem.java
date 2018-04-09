@@ -7,6 +7,7 @@ import static dk.sdu.mmmi.cbse.common.data.GameKeys.RIGHT;
 import static dk.sdu.mmmi.cbse.common.data.GameKeys.SPACE;
 import static dk.sdu.mmmi.cbse.common.data.GameKeys.UP;
 import dk.sdu.mmmi.cbse.common.data.World;
+import dk.sdu.mmmi.cbse.common.data.entityparts.LifePart;
 import dk.sdu.mmmi.cbse.common.data.entityparts.MovingPart;
 import dk.sdu.mmmi.cbse.common.data.entityparts.PositionPart;
 import dk.sdu.mmmi.cbse.common.services.IEntityProcessingService;
@@ -31,11 +32,14 @@ import org.openide.util.lookup.ServiceProviders;
 public class PlayerSystem implements IEntityProcessingService, IGamePluginService {
 
     private Entity playerE;
+    private boolean canShoot;
+    private float CD;
     
     @Override
     public void process(GameData gameData, World world) {
 
         for (Entity player : world.getEntities(Player.class)) {
+            LifePart lifePart = player.getPart(LifePart.class);
             PositionPart positionPart = player.getPart(PositionPart.class);
             MovingPart movingPart = player.getPart(MovingPart.class);
 
@@ -43,10 +47,13 @@ public class PlayerSystem implements IEntityProcessingService, IGamePluginServic
             movingPart.setRight(gameData.getKeys().isDown(RIGHT));
             movingPart.setUp(gameData.getKeys().isDown(UP));
             
-            if(gameData.getKeys().isDown(SPACE)){
+            weaponCD(gameData);
+            if (gameData.getKeys().isDown(SPACE) && canShoot) {
                 IShootLaser laserService = Lookup.getDefault().lookup(IShootLaser.class);
-                Entity laser = laserService.createLaser(player, gameData);
-                world.addEntity(laser);
+                    Entity laser = laserService.createLaser(player, gameData);
+                    world.addEntity(laser);
+                    canShoot = false;
+                    CD = 0.3f;
             }
             
             movingPart.process(gameData, player);
@@ -98,6 +105,8 @@ public class PlayerSystem implements IEntityProcessingService, IGamePluginServic
         float radians = 3.1415f / 2;
         
         Entity playerShip = new Player();
+        playerShip.setRadius(4);
+        playerShip.add(new LifePart(3));
         playerShip.add(new MovingPart(deacceleration, acceleration, maxSpeed, rotationSpeed));
         playerShip.add(new PositionPart(x, y, radians));
         
@@ -108,6 +117,14 @@ public class PlayerSystem implements IEntityProcessingService, IGamePluginServic
     public void stop(GameData gameData, World world) {
         System.out.println("Uninstalling Player Plugin");
         world.removeEntity(this.playerE);
+    }
+
+    private void weaponCD(GameData gameData) {
+        if (CD > 0) {
+            CD -= gameData.getDelta();
+        } else {
+            canShoot = true;
+        }
     }
 
 }

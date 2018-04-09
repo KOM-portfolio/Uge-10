@@ -8,6 +8,7 @@ package dk.sdu.mmmi.cbse.enemy;
 import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.data.GameData;
 import dk.sdu.mmmi.cbse.common.data.World;
+import dk.sdu.mmmi.cbse.common.data.entityparts.LifePart;
 import dk.sdu.mmmi.cbse.common.data.entityparts.MovingPart;
 import dk.sdu.mmmi.cbse.common.data.entityparts.PositionPart;
 import dk.sdu.mmmi.cbse.common.services.IEntityProcessingService;
@@ -47,6 +48,7 @@ public class EnemySystem implements IGamePluginService, IEntityProcessingService
     @Override
     public void process(GameData gameData, World world) {
         for (Entity entity : world.getEntities(Enemy.class)) {
+            LifePart lifePart = entity.getPart(LifePart.class);
             PositionPart positionPart = entity.getPart(PositionPart.class);
             MovingPart movingPart = entity.getPart(MovingPart.class);
             
@@ -60,9 +62,13 @@ public class EnemySystem implements IGamePluginService, IEntityProcessingService
                 Entity laser = laserService.createLaser(entity, gameData);
                 world.addEntity(laser);
             }
+            if (lifePart.isDead()) {
+                world.removeEntity(entity);
+            }
             
             movingPart.process(gameData, entity);
             positionPart.process(gameData, entity);
+            lifePart.process(gameData, entity);
             
             updateShape(entity);
         }
@@ -79,6 +85,7 @@ public class EnemySystem implements IGamePluginService, IEntityProcessingService
         float y = gameData.getDisplayHeight() / 3;
         float radians = 3.1415f / 2;
         
+        enemyShip.add(new LifePart(3));
         enemyShip.setRadius(4);
         enemyShip.add(new MovingPart(deacceleration, acceleration, maxSpeed, rotationSpeed));
         enemyShip.add(new PositionPart(x, y, radians));

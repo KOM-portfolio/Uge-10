@@ -8,8 +8,10 @@ package dk.sdu.mmmi.cbse.laser;
 import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.data.GameData;
 import dk.sdu.mmmi.cbse.common.data.World;
+import dk.sdu.mmmi.cbse.common.data.entityparts.LifePart;
 import dk.sdu.mmmi.cbse.common.data.entityparts.MovingPart;
 import dk.sdu.mmmi.cbse.common.data.entityparts.PositionPart;
+import dk.sdu.mmmi.cbse.common.data.entityparts.TimerPart;
 import dk.sdu.mmmi.cbse.common.services.IEntityProcessingService;
 import dk.sdu.mmmi.cbse.commonlaser.IShootLaser;
 import dk.sdu.mmmi.cbse.commonlaser.Laser;
@@ -48,6 +50,8 @@ public class LaserSystem implements IShootLaser, IEntityProcessingService {
         
         bullet.add(new PositionPart(bx + x, by + y, radians));
         bullet.add(new MovingPart(0, 5000000, speed, 5));
+        bullet.add(new TimerPart(1));
+        bullet.add(new LifePart(1));
 
         bullet.setShapeX(new float[2]);
         bullet.setShapeY(new float[2]);
@@ -61,10 +65,16 @@ public class LaserSystem implements IShootLaser, IEntityProcessingService {
 
             PositionPart positionPart = laser.getPart(PositionPart.class);
             MovingPart movingPart = laser.getPart(MovingPart.class);
+            TimerPart timerPart = laser.getPart(TimerPart.class);
             movingPart.setUp(true);
+            
+            if (timerPart.getExpiration() < 0) {
+                world.removeEntity(laser);
+            }
             
             movingPart.process(gameData, laser);
             positionPart.process(gameData, laser);
+            timerPart.process(gameData, laser);
 
             setShape(laser);
         }
