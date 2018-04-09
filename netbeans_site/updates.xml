@@ -90,6 +90,11 @@
 
 </module>
 
+<module codenamebase="dk.sdu.mmmi.cbse.CommonPlayer" distribution="CommonPlayer-1.0.1-SNAPSHOT.nbm" downloadsize="0" license="B2517D31" needsrestart="false" releasedate="2018/04/09" targetcluster="asteroidnbmodules">
+    <manifest OpenIDE-Module="dk.sdu.mmmi.cbse.CommonPlayer" OpenIDE-Module-Display-Category="dk.sdu.mmmi.cbse" OpenIDE-Module-Implementation-Version="1.0.1-20180409" OpenIDE-Module-Long-Description="&lt;undefined&gt;" OpenIDE-Module-Module-Dependencies="org.netbeans.api.annotations.common/1 &gt; 1.27.1, dk.sdu.mmmi.cbse.Common &gt; 1.0.1" OpenIDE-Module-Name="CommonPlayer" OpenIDE-Module-Requires="org.openide.modules.ModuleFormat1" OpenIDE-Module-Short-Description="&lt;undefined&gt;" OpenIDE-Module-Specification-Version="1.0.1"/>
+
+</module>
+
 
 <license name="B2517D31">Copyright  2018
 -----------------------------------------------------

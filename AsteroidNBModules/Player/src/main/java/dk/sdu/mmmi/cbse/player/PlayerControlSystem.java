@@ -10,10 +10,7 @@ import dk.sdu.mmmi.cbse.common.data.entityparts.MovingPart;
 import dk.sdu.mmmi.cbse.common.data.entityparts.PositionPart;
 import dk.sdu.mmmi.cbse.common.services.IEntityProcessingService;
 import dk.sdu.mmmi.cbse.common.services.IGamePluginService;
-//import static java.lang.Math.cos;
-//import static java.lang.Math.sin;
-//import static java.lang.Math.sqrt;
-//import org.openide.util.Lookup;
+import dk.sdu.mmmi.cbse.commonplayer.Player;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.util.lookup.ServiceProviders;
 

@@ -67,6 +67,7 @@
         <module>Asteroid</module>
         <module>CommonEnemy</module>
         <module>Enemy</module>
+        <module>CommonPlayer</module>
     </modules>
 
     <properties>
