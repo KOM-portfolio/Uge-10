@@ -13,5 +13,5 @@ import dk.sdu.mmmi.cbse.common.data.World;
  * @author chris
  */
 public interface ISplitAsteroid {
-    void createSplitAsteroid(Entity e, World w);
+    void createSplitAsteroid(Entity parent, World world);
 }

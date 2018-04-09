@@ -11,3 +11,5 @@
 /AsteroidNBModules/CommonPlayer/target/
 /AsteroidNBModules/CommonLaser/target/
 /AsteroidNBModules/Laser/target/
+/AsteroidNBModules/Collision/target/
+/AsteroidNBModules/AsteroidSplitter/target/
