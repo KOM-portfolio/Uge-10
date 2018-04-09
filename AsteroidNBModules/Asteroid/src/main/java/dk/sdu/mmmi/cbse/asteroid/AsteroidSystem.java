@@ -30,7 +30,7 @@ public class AsteroidSystem implements IGamePluginService, IEntityProcessingServ
 
     @Override
     public void start(GameData gameData, World world) {
-        System.out.println("Initialize Asteroid Plugin");
+        System.out.println("Installing Asteroid Plugin");
         Entity asteroid = createAsteroid();
         world.addEntity(asteroid);
     }

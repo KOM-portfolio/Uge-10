@@ -4,13 +4,16 @@ import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.data.GameData;
 import static dk.sdu.mmmi.cbse.common.data.GameKeys.LEFT;
 import static dk.sdu.mmmi.cbse.common.data.GameKeys.RIGHT;
+import static dk.sdu.mmmi.cbse.common.data.GameKeys.SPACE;
 import static dk.sdu.mmmi.cbse.common.data.GameKeys.UP;
 import dk.sdu.mmmi.cbse.common.data.World;
 import dk.sdu.mmmi.cbse.common.data.entityparts.MovingPart;
 import dk.sdu.mmmi.cbse.common.data.entityparts.PositionPart;
 import dk.sdu.mmmi.cbse.common.services.IEntityProcessingService;
 import dk.sdu.mmmi.cbse.common.services.IGamePluginService;
+import dk.sdu.mmmi.cbse.commonlaser.IShootLaser;
 import dk.sdu.mmmi.cbse.commonplayer.Player;
+import org.openide.util.Lookup;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.util.lookup.ServiceProviders;
 
@@ -25,9 +28,9 @@ import org.openide.util.lookup.ServiceProviders;
  *
  * @author jcs
  */
-public class PlayerControlSystem implements IEntityProcessingService, IGamePluginService {
+public class PlayerSystem implements IEntityProcessingService, IGamePluginService {
 
-    private Entity player;
+    private Entity playerE;
     
     @Override
     public void process(GameData gameData, World world) {
@@ -40,6 +43,11 @@ public class PlayerControlSystem implements IEntityProcessingService, IGamePlugi
             movingPart.setRight(gameData.getKeys().isDown(RIGHT));
             movingPart.setUp(gameData.getKeys().isDown(UP));
             
+            if(gameData.getKeys().isDown(SPACE)){
+                IShootLaser laserService = Lookup.getDefault().lookup(IShootLaser.class);
+                Entity laser = laserService.createLaser(player, gameData);
+                world.addEntity(laser);
+            }
             
             movingPart.process(gameData, player);
             positionPart.process(gameData, player);
@@ -74,10 +82,9 @@ public class PlayerControlSystem implements IEntityProcessingService, IGamePlugi
     
     @Override
     public void start(GameData gameData, World world) {
-        
-        // Add entities to the world
-        player = createPlayerShip(gameData);
-        world.addEntity(player);
+        System.out.println("Installing Player Plugin");
+        this.playerE = createPlayerShip(gameData);
+        world.addEntity(this.playerE);
     }
 
     private Entity createPlayerShip(GameData gameData) {
@@ -99,8 +106,8 @@ public class PlayerControlSystem implements IEntityProcessingService, IGamePlugi
 
     @Override
     public void stop(GameData gameData, World world) {
-        // Remove entities
-        world.removeEntity(player);
+        System.out.println("Uninstalling Player Plugin");
+        world.removeEntity(this.playerE);
     }
 
 }

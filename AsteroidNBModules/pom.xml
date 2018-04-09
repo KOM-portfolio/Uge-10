@@ -68,6 +68,8 @@
         <module>CommonEnemy</module>
         <module>Enemy</module>
         <module>CommonPlayer</module>
+        <module>CommonLaser</module>
+        <module>Laser</module>
     </modules>
 
     <properties>

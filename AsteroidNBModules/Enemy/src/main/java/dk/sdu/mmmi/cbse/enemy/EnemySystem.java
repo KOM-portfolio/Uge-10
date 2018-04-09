@@ -13,6 +13,8 @@ import dk.sdu.mmmi.cbse.common.data.entityparts.PositionPart;
 import dk.sdu.mmmi.cbse.common.services.IEntityProcessingService;
 import dk.sdu.mmmi.cbse.common.services.IGamePluginService;
 import dk.sdu.mmmi.cbse.commonenemy.Enemy;
+import dk.sdu.mmmi.cbse.commonlaser.IShootLaser;
+import org.openide.util.Lookup;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.util.lookup.ServiceProviders;
 
@@ -33,7 +35,7 @@ public class EnemySystem implements IGamePluginService, IEntityProcessingService
     public void start(GameData gameData, World world) {
         System.out.println("Installing Enemy Plugin");
         Entity enemy = createEnemyShip(gameData);
-        enemyID = world.addEntity(enemy);
+        this.enemyID = world.addEntity(enemy);
     }
 
     @Override
@@ -52,6 +54,12 @@ public class EnemySystem implements IGamePluginService, IEntityProcessingService
             movingPart.setLeft(random < 0.2);
             movingPart.setRight(random > 0.3 && random < 0.5);
             movingPart.setUp(random > 0.7 && random < 0.9);
+            
+            if(random > 0.98){
+                IShootLaser laserService = Lookup.getDefault().lookup(IShootLaser.class);
+                Entity laser = laserService.createLaser(entity, gameData);
+                world.addEntity(laser);
+            }
             
             movingPart.process(gameData, entity);
             positionPart.process(gameData, entity);
